@@ -1,0 +1,11 @@
+streamlit
+python-docx
+pandas
+langchain-core
+langchain-community
+langchain-openai
+langchain-text-splitters
+chromadb
+crewai
+crewai-tools
+openai>=1.30.0
