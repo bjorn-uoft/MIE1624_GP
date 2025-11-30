@@ -20,14 +20,6 @@ print("API key set?", os.getenv("OPENAI_API_KEY") is not None)
 # 2. LOAD AND STRUCTURE PROJECT DOCUMENTS (RAG INPUT)
 
 from pathlib import Path
-# Ensure python-docx is available (for Streamlit Cloud)
-try:
-    from docx import Document as DocxDocument
-except ModuleNotFoundError:
-    import subprocess, sys
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "python-docx"])
-    from docx import Document as DocxDocument
-
 import pandas as pd
 import json
 from langchain_core.documents import Document as LCDocument
@@ -37,15 +29,20 @@ BASE_DIR = Path(".")
 
 docs_raw = []
 
-# ---------- 2.1 MAIN REPORT (docx) ----------
-def load_docx(path: Path) -> str:
-    doc = DocxDocument(path)
-    return "\n".join(p.text for p in doc.paragraphs if p.text.strip())
+# ---------- 2.1 MAIN REPORT (txt) ----------
+from pathlib import Path
+from langchain_core.documents import Document as LCDocument
 
-report_path = BASE_DIR / "MIE1624 Final Project Report Group 10_.docx"
-assert report_path.exists(), f"Report file not found at {report_path}"
-report_text = load_docx(report_path)
+BASE_DIR = Path(".")
 
+# 1) MAIN REPORT – now loaded from plain text file
+report_txt_path = BASE_DIR / "group10_report.txt"
+if not report_txt_path.exists():
+    raise FileNotFoundError(f"Missing report text file: {report_txt_path}")
+
+report_text = report_txt_path.read_text(encoding="utf-8")
+
+docs_raw = []
 docs_raw.append(
     LCDocument(
         page_content=report_text,
